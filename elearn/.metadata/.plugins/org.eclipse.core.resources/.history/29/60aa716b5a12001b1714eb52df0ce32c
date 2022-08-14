@@ -1,0 +1,29 @@
+spring.application.name=journey-service
+management.endpoints.web.exposure.include=*
+spring.profiles.active=${ACTIVE_PROFILE}
+ Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+spring.datasource.url=jdbc:postgresql://172.17.0.1:5432/techcamp_elearn_journeys?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory&sslmode=require
+spring.datasource.username=elearn_user
+spring.datasource.password=t1$f3U$%f5D4Zd
+strings.gateway_url=http://37.139.8.156:8085/
+strings.subscription_fee=1
+
+#spring.datasource.url=jdbc:postgresql://localhost:5432/techcamp_elearn_journeys
+#spring.datasource.username=postgres
+#spring.datasource.password=123456
+#strings.my_host=http://127.0.0.1:8080
+#strings.gateway_url=http://127.0.0.1:8085/
+#strings.progress_service_host=http://localhost:8081/users/topics/
+
+# The SQL dialect makes Hibernate generate better SQL for the chosen database
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+spring.jackson.serialization.fail-on-empty-beans=false
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
+
+## Hibernate ddl auto (create, create-drop, validate, update)
+spring.jpa.hibernate.ddl-auto = update
+
+## Remove stack trace from json response
+server.error.include-stacktrace=never
+
+server.port=8084

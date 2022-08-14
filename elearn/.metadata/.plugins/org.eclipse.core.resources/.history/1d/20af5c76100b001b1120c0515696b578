@@ -1,0 +1,40 @@
+package app.techcamp.gateway.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringCloudConfig {
+	
+	@Value("${strings.companyuser_service}")
+    private String companyuser_service;
+	
+	@Value("${strings.progress_service}")
+    private String progress_service;
+	
+	@Value("${strings.journey_service}")
+    private String journey_service;
+
+    @Bean
+    public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("companyuser-service", r -> r.path("/companies/**","/promotions/**","/trainees/**")
+                        .uri("companyuser-service")
+                        .id("companyuser-service"))
+                
+                .route(r -> r.path("/categories/**","/enrollments/**","/search/**","/journeys/**","/sections/**",
+                		"/payments/**","/subscriptions/**","/search/**","/categories","/enrollments","/api/zungu/**")
+                        .uri(journey_service)
+                        .id("journey-service"))
+                                
+                .route(r -> r.path("/users/**")
+                		.uri(progress_service)
+                		.id("userprogress-service"))
+                
+                .build();
+    }
+
+}

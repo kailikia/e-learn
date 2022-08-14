@@ -1,0 +1,32 @@
+spring:
+   application:
+      name: jobs-service
+   datasource:
+      url: jdbc:postgresql://127.0.0.1:5432/techcamp_elearn_jobs
+      userName: postgres
+      password: 123456
+   jpa:
+      properties:
+         hibernate: 
+            dialect : org.hibernate.dialect.PostgreSQLDialect
+            generateDdl: true
+            jdbc:
+               lob: 
+               nonContextualCreation: true 
+   jackson: 
+      serialization:
+         failOnEmptyBeans: false
+         
+    
+server:
+   port: 8084
+
+eureka:
+   client:
+      registerWithEureka: true
+      fetchRegistry: true
+      serviceUrl:
+         defaultZone: http://localhost:8085/eureka/ 
+   instance:
+      hostName: localhost
+      

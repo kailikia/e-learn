@@ -1,0 +1,24 @@
+spring.application.name=userprogress-service
+
+## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+spring.datasource.url=jdbc:postgresql://172.17.0.1:5432/techcamp_elearn_progress?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory&sslmode=verify-ca
+spring.datasource.username=myuser
+spring.datasource.password=mypass
+strings.my_host=http://139.59.155.134:8081
+strings.gateway_url=http://139.59.155.134:8085/
+
+#spring.datasource.url=jdbc:postgresql://localhost:5432/techcamp_elearn_progress
+#spring.datasource.username=postgres
+#spring.datasource.password=123456
+#strings.my_host=http://127.0.0.1:8081
+#strings.course_service_host=http://localhost:8080/journeys/topics/total/
+
+# The SQL dialect makes Hibernate generate better SQL for the chosen database
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+spring.jackson.serialization.fail-on-empty-beans=false
+
+## Hibernate ddl auto (create, create-drop, validate, update)
+spring.jpa.hibernate.ddl-auto = update
+
+server.port=8081

@@ -1,0 +1,60 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: mynginx
+spec:
+  type: LoadBalancer
+  selector:
+    app: mynginx
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+---
+
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: e-learn
+spec:
+  selector:
+    matchLabels:
+      app: e-learn
+      tier: services
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: e-learn
+        tier: services
+    spec:
+      containers:
+        - name: course-service
+          image: gcr.io/google-samples/gb-frontend:v4
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          env:
+            - name: GET_HOSTS_FROM
+              value: dns
+          ports:
+            - containerPort: 80
+#apiVersion: extensions/v1beta1
+#kind: Deployment
+#metadata:
+#  name: kube-node-lease
+#spec:
+#  replicas: 3
+#  template:
+#    metadata:
+#      labels:
+#        app: kube-node-lease
+#    spec:
+#      containers:
+#      - name: nginx
+#        image: library/nginx:1.17
+#        ports:
+#          - containerPort: 80
+#            protocol: TCP

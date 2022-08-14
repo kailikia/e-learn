@@ -1,0 +1,107 @@
+package app.techcamp.elearn.controllers;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import app.techcamp.elearn.exceptions.ResourceNotFoundException;
+import app.techcamp.elearn.models.AuditModel;
+import app.techcamp.elearn.models.SubscriptionPayment;
+import app.techcamp.elearn.repositories.SubscriptionPaymentRepository;
+import app.techcamp.elearn.repositories.MyEnrollRepository;
+import springfox.documentation.annotations.ApiIgnore;
+
+@RestController
+public class PaymentController {
+	
+	@Value("${strings.subscription_fee}")
+    private String subscription_fee;
+		
+	@Autowired
+	private SubscriptionPaymentRepository myPaymentrepository;
+	
+   
+    @GetMapping("/payments")
+    public List<SubscriptionPayment> getAllPayments() 
+    {
+    	List<SubscriptionPayment> payments = myPaymentrepository.findAll();
+    	
+    	if(payments.isEmpty()) 
+    	{
+    		throw new ResourceNotFoundException("No payments found");
+    	}
+    	else
+    	{
+    		return payments;       	
+    	}  	
+    }
+    
+   
+    @GetMapping("/payments/{userid}")
+    public List<SubscriptionPayment> getUserPayments(@PathVariable String userid) 
+    {
+    	String account = "focs-"+ userid.toString();
+    	List<SubscriptionPayment> payments = myPaymentrepository.findByAccount(account);
+    	
+    	if(payments.isEmpty()) 
+    	{
+    		throw new ResourceNotFoundException("No payments found");
+    	}
+    	else
+    	{
+    		return payments;       	
+    	}
+    }
+    
+    @GetMapping("/subscriptions/check/{traineeId}")
+    public HashMap<String, Boolean> getTraineeSubscription(@PathVariable Long traineeId) 
+    {
+    	HashMap<String, Boolean> res =  new HashMap<>();
+    	Date today = new Date();
+       	
+    	String account = "focs-"+ String.valueOf(traineeId);
+    	
+    	return myPaymentrepository.findByAccountId(account).map(mysub -> {
+    		
+//    		try {
+	   			 long diff = today.getTime() - ((AuditModel) mysub).getCreatedAt().getTime();
+
+	   			 int mins = (int)diff/(1000 * 60);
+	   			 
+	   			 if((mins <= 1) && mysub.getAmount() >= Integer.parseInt(subscription_fee))
+	   			 {
+	   				res.put("subscribed", true); 
+	   			 }
+	   			 else
+	   			 {
+	   				res.put("subscribed", false);
+	   			 }
+	   			 return res;
+	   			 
+//	   		} catch (Exception e) {
+//	   			throw new ResourceNotFoundException("Error: "+ e.getMessage());
+//	   		}
+    			
+    	}).orElseThrow(() -> new ResourceNotFoundException("no payments found for user "));
+
+    }
+         
+   
+    @ApiIgnore
+    @PostMapping("/api/zungu/bila")
+    public SubscriptionPayment createEnrollPayment(@Valid @RequestBody SubscriptionPayment payment) 
+    { 
+    	return myPaymentrepository.save(payment);    	
+    }
+
+}

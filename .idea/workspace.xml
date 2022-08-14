@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="016266d7-c0d2-4ac1-98e2-36e0aafcbdb0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/spring-boot-rest-course-service/src/main/java/app/techcamp/elearn/controllers/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-boot-rest-course-service/src/main/java/app/techcamp/elearn/controllers/CategoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-boot-rest-course-service/src/main/java/app/techcamp/elearn/models/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-boot-rest-course-service/src/main/java/app/techcamp/elearn/models/Category.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-boot-rest-course-service/target/classes/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-boot-rest-gateway-service/src/main/java/app/techcamp/gateway/config/SpringCloudConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-boot-rest-gateway-service/src/main/java/app/techcamp/gateway/config/SpringCloudConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-boot-rest-gateway-service/target/classes/app/techcamp/gateway/config/SpringCloudConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/spring-boot-rest-gateway-service/target/classes/app/techcamp/gateway/config/SpringCloudConfig.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2CzQAlCYCYTYrIwA7J6F9M0T3Wp" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/user/full_elearn&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="016266d7-c0d2-4ac1-98e2-36e0aafcbdb0" name="Changes" comment="" />
+      <created>1659802791848</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1659802791848</updated>
+      <workItem from="1659802793368" duration="7383000" />
+      <workItem from="1660306656366" duration="10614000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

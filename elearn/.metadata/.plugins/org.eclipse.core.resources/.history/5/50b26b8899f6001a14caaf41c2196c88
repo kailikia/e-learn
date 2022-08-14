@@ -1,0 +1,215 @@
+package app.techcamp.elearn.models;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "journeys")
+public class Journey extends AuditModel {
+    @Id
+    @GeneratedValue(generator = "journey_generator")
+    @SequenceGenerator(
+            name = "journey_generator",
+            sequenceName = "journey_sequence",
+            initialValue = 1000
+    )
+    private Long id;
+
+    @NotBlank
+    @Size(min = 3, max = 100)
+    @Column(unique=true)
+    private String name;
+
+    @Column(columnDefinition = "text")
+    private String description;
+    
+    @Column(columnDefinition = "text")
+    private String requirements;
+    
+    @Column(name="sort_order")
+	private int sortOrder;
+    
+    @javax.persistence.Transient
+	private long category_id;
+    
+    @Column(name="company_id", nullable=false)
+    @NotNull(message= "companyId may not be empty")
+	private int companyId;
+    
+    @javax.persistence.Transient
+    private int totalProgress;
+	
+    @javax.persistence.Transient
+    private int totalTopics;
+    
+    @javax.persistence.Transient
+    private int totalEnrollments;
+
+    @javax.persistence.Transient
+    private long traineeId;
+    
+    @javax.persistence.Transient
+    private boolean subscribed;
+    
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+//    @JsonIgnore
+    private Category category;
+	
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<UserJourneyEnroll> uje;
+	
+    @Column(columnDefinition = "text")
+    private String journeyUrl;
+    
+    @Column(columnDefinition = "text")
+    private String videoUrl;
+    
+    @Column(columnDefinition = "text")
+    private String streamUrl;
+       
+       
+	public Journey() {
+	}
+		
+	public long getCategroy_id() {
+		return this.category.getId();
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+	
+//	public void setCategory_id() {
+//		this.category_id = this.category.getId();
+//	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getRequirements() {
+		return requirements;
+	}
+
+	public void setRequirements(String requirements) {
+		this.requirements = requirements;
+	}
+
+	public int getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(int companyId) {
+		this.companyId = companyId;
+	}
+
+	public float getTotalProgress() {
+		return totalProgress;
+	}
+
+	public float getTotalTopics() {
+		return totalTopics;
+	}
+
+	public String getJourneyUrl() {
+		return journeyUrl;
+	}
+
+	public void setJourneyUrl(String journeyUrl) {
+		this.journeyUrl = journeyUrl;
+	}
+
+	public int getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public String getVideoUrl() {
+		return videoUrl;
+	}
+
+	public void setVideoUrl(String videoUrl) {
+		this.videoUrl = videoUrl;
+	}
+
+	public String getStreamUrl() {
+		return streamUrl;
+	}
+
+	public void setStreamUrl(String streamUrl) {
+		this.streamUrl = streamUrl;
+	}
+
+	public int getTotalEnrollments() {
+		return totalEnrollments;
+	}
+
+	public void setTotalEnrollments(int totalEnrollments) {
+		this.totalEnrollments = totalEnrollments;
+	}
+
+	public void setTotalProgress(int totalProgress) {
+		this.totalProgress = totalProgress;
+	}
+
+	public void setTotalTopics(int totalTopics) {
+		this.totalTopics = totalTopics;
+	}
+
+	public long getTraineeId() {
+		return traineeId;
+	}
+
+	public void setTraineeId(long traineeId) {
+		this.traineeId = traineeId;
+	}
+
+	public boolean isSubscription() {
+		return subscribed;
+	}
+
+	public void setSubscription(boolean subscription) {
+		this.subscribed = subscription;
+	}
+}
+
+

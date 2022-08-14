@@ -1,0 +1,193 @@
+package app.techcamp.elearn.controllers;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import app.techcamp.elearn.exceptions.ResourceNotFoundException;
+
+import app.techcamp.elearn.models.Journey;
+
+import app.techcamp.elearn.models.UserJourneyEnroll;
+import app.techcamp.elearn.pojos.Trainee;
+import app.techcamp.elearn.repositories.JourneyRepository;
+
+import app.techcamp.elearn.repositories.MyEnrollRepository;
+import app.techcamp.elearn.repositories.TopicRepository;
+
+@RestController
+@RequestMapping("/journeys")
+public class UserJourneyEnrollController {
+	
+	@Autowired
+	private MyEnrollRepository myJourneyEnrollrepository;
+	
+	@Autowired
+	private JourneyRepository journeyRepository;
+	
+	@Autowired
+    private TopicRepository topicRepository;
+	
+	@Autowired
+    private PaymentController paycontroll;
+	
+	@Autowired
+    RestTemplate restTemplate;
+	
+	 @Value("${strings.gateway_url}")
+	 private String gateway_url;
+	    
+    @GetMapping("/enroll/users/{userid}")
+    public List<Journey> getMyCourses(@PathVariable String userid) 
+    {
+    		return myJourneyEnrollrepository.findByUserId(userid)
+    		.stream().map(ue ->{
+    			ue.getJourney().setTotalTopics(topicRepository.findTotalJourneyTopics(ue.getJourney().getId()));
+    			Long jid = ue.getJourney().getId();
+    			
+    			String u = gateway_url+"users/topics/"+userid+'/'+jid;
+    			int totalJourneyUserProgress = restTemplate.getForObject(u, Integer.class);
+    			
+    			ue.getJourney().setTotalProgress(totalJourneyUserProgress);
+    			
+    			String traineeurl = gateway_url+userid;
+    			
+    			Trainee trainee = restTemplate.getForObject(traineeurl, Trainee.class);
+    			
+    			ue.getJourney().setSubscription(paycontroll.getTraineeSubscription(trainee.getId()).get("subscribed"));
+    			
+    			return ue.getJourney();
+    		}).collect(Collectors.toList());
+    }
+    
+   
+    @GetMapping("/{joid}/enroll/users/{userid}")
+    public Optional<Journey> getMyEnrollCourse(@PathVariable String userid, @PathVariable int joid) 
+    {
+    	return myJourneyEnrollrepository.findByUserIdAndJourneyId(userid,joid)
+    	.map(us -> {
+    		us.getJourney().setTotalTopics(topicRepository.findTotalJourneyTopics(us.getJourney().getId()));
+			Long jid = us.getJourney().getId();
+			
+			String u = gateway_url+"users/topics/"+userid+'/'+jid;
+			int totalJourneyUserProgress = restTemplate.getForObject(u, Integer.class);
+			
+			us.getJourney().setTotalProgress(totalJourneyUserProgress);
+			return us.getJourney();  		
+    	});
+    	
+    }
+    
+    @GetMapping("/{joid}/enrollments")
+    public List<UserJourneyEnroll> getMyEnrolljourney(@PathVariable int joid) 
+    {
+    	return myJourneyEnrollrepository.findJourneyEnrollments(joid)
+    			.stream().map(ue ->{
+    				//For second
+        			String url = gateway_url+"trainees/"+ue.getUserId();
+        			Trainee trainee = restTemplate.getForObject(url, Trainee.class);
+        			ue.setTraineeEmail(trainee.getEmail());
+        			ue.setTraineeName(trainee.getFullName());
+        			ue.setTraineeFID(trainee.getFirebaseId());
+        			ue.setTraineeID(trainee.getId());
+        			ue.setTraineeDeviceId(trainee.getLatestDeviceId());
+        			return ue;
+        }).collect(Collectors.toList());    	
+    }
+    
+   
+    @GetMapping("/{joid}/enroll/total")
+    public Map<String, Integer> getMyEnrollCountCourse(@PathVariable int joid) 
+    {
+    	int us = myJourneyEnrollrepository.findCountEnrollJourneyId(joid);
+    	Map<String, Integer> number = new HashMap<>();
+    	number.put("enrollments", us);
+    	return number;    	
+    }
+               
+   
+    @PostMapping("/{joid}/enroll/users")
+    public UserJourneyEnroll createMyCourse(@Valid @RequestBody UserJourneyEnroll journeyEnroll, @PathVariable int joid) 
+    { 
+    	UserJourneyEnroll us = myJourneyEnrollrepository.findByUserIdAndJourneyIdExists(journeyEnroll.getUserId(),joid);
+    	
+    	if(us != null)
+    	{
+    		String url = gateway_url+"trainees/"+us.getUserId();
+			Trainee trainee = restTemplate.getForObject(url, Trainee.class);
+			us.setTraineeID(trainee.getId());
+			us.setSubscribed(paycontroll.getTraineeSubscription(trainee.getId()));
+    		return us;
+    	}
+    	else
+    	{
+    		return journeyRepository.findById(Long.valueOf(joid)).map(journey -> {
+    			journeyEnroll.setJourney(journey);
+    			UserJourneyEnroll je = myJourneyEnrollrepository.save(journeyEnroll);
+    			String url = gateway_url+"trainees/"+je.getUserId();
+    			Trainee trainee = restTemplate.getForObject(url, Trainee.class);
+    			je.setTraineeID(trainee.getId());
+    			je.setSubscribed(paycontroll.getTraineeSubscription(trainee.getId()));
+        		return je;
+    			
+    		}).orElseThrow(() -> new ResourceNotFoundException("No journeys found by that id"));
+    		
+    	}
+    }
+    
+    @GetMapping("/top")
+    public  ArrayList<Journey> getTopCourses() 
+    {      
+        ArrayList<Integer> journeyCodes = myJourneyEnrollrepository.findTopJourney();
+    	ArrayList<Journey> journeys = new ArrayList<>();
+    	int limit = 0;
+        
+        for (int code : journeyCodes) 
+        {
+        	if(limit < 10)
+        	{
+        		journeys.add(journeyRepository.findById((long) code).map(coursep ->{
+            		return coursep;
+            	}).orElseThrow(() -> new ResourceNotFoundException("journey not found with id ")));
+        	}
+        	limit++;
+        }
+        return journeys;
+    }
+    
+    @GetMapping("/top/10")
+    public  ArrayList<Journey> getTopTenCourses() 
+    {
+    	ArrayList<Integer> journeyCodes = myJourneyEnrollrepository.findTopTenJourney();
+    	ArrayList<Journey> journeys = new ArrayList<>();
+    	int limit = 0;
+        
+        for (int code : journeyCodes) 
+        {
+        	if(limit > 9 && limit < 21)
+        	{
+        		journeys.add(journeyRepository.findById((long) code).map(coursep ->{
+            		return coursep;
+            	}).orElseThrow(() -> new ResourceNotFoundException("journey not found with id ")));
+        	}
+        	limit++;
+        }
+        return journeys;
+    }
+
+}
